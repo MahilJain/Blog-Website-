@@ -13,20 +13,18 @@ function Signup() {
     const { register, handleSubmit } = useForm();
 
     const create = async (data) => {
-        setError("");
+        setError("")
         try {
             const userData = await authService.createAccount(data)
             if (userData) {
-                await authService.getCurrentUser()
-                if (userData) {
-                    dispatch(login(userData));
-                    navigate("/");
-
+                const currentUser = await authService.getCurrentUser()
+                if (currentUser) {
+                    dispatch(login({ userData: currentUser }))
+                    navigate('/')
                 }
             }
         } catch (error) {
-            setError(error.message);
-
+            setError(error.message)
         }
     }
 
