@@ -1,46 +1,89 @@
-import React, { useState, useEffect } from "react";
-import appwriteService from "../appwrite/config";
-import { Container, PostCard } from "../components";
-
+import React, { useState, useEffect, useMemo } from 'react'
+import appwriteService from '../appwrite/config'
+import { Container, PostCard } from '../components'
 
 function Home() {
-    const [posts, setPosts] = useState([]);
+    const [posts, setPosts] = useState([])
+    const [loading, setLoading] = useState(true)
+    const [search, setSearch] = useState('')
+
     useEffect(() => {
-        appwriteService.getPosts().then((posts) => {
-            if (posts) {
-                setPosts(posts.documents);
-            }
-        })
+        let isMounted = true
+
+        appwriteService
+            .getPosts()
+            .then((response) => {
+                if (response && isMounted) {
+                    setPosts(response.documents)
+                }
+            })
+            .catch(() => {
+                if (isMounted) {
+                    setPosts([])
+                }
+            })
+            .finally(() => {
+                if (isMounted) {
+                    setLoading(false)
+                }
+            })
+
+        return () => {
+            isMounted = false
+        }
     }, [])
-    
-    if(posts.length === 0) {
-        return (
-            <div className="w-full py-8 mt-4 text-center">
-                <Container>
-                    <div className="flex flex-wrap">
-                        <div className="p-2 w-full">
-                            <h1 className="text-2xl font-bold hover:text-gray-500">
-                                Login to read posts
-                            </h1>
-                        </div>
-                    </div>
-                </Container>
-            </div>
+
+    const filteredPosts = useMemo(() => {
+        const query = search.trim().toLowerCase()
+
+        if (!query) {
+            return posts
+        }
+
+        return posts.filter((post) =>
+            post.title.toLowerCase().includes(query) ||
+            (post.content || '').toLowerCase().includes(query)
         )
-    }
+    }, [posts, search])
+
     return (
-        <div className="w-full py-8 ">
+        <div className="w-full py-8">
             <Container>
-                <div className="flex flex-wrap">
-                    {posts.map((post) => (
-                        <div key={post.$id} className="p-2 w-1/4">
-                            <PostCard {...post} />
-                        </div>
-                    ))}
+                <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                        <h1 className="text-3xl font-bold text-white">Latest Posts</h1>
+                        <p className="text-slate-300">Discover insightful stories, tutorials, and updates.</p>
+                    </div>
+                    <input
+                        type="search"
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        placeholder="Search posts"
+                        className="w-full max-w-sm rounded-lg border border-slate-700 bg-slate-900 px-4 py-2 text-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none"
+                    />
                 </div>
+
+                {loading ? (
+                    <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-6 text-center text-slate-300">
+                        Loading posts...
+                    </div>
+                ) : filteredPosts.length === 0 ? (
+                    <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-10 text-center text-slate-300">
+                        <h2 className="text-2xl font-semibold text-white">No posts found</h2>
+                        <p className="mt-2">Try a different keyword or check back later for fresh content.</p>
+                    </div>
+                ) : (
+                    <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+                        {filteredPosts.map((post) => (
+                            <div key={post.$id} className="h-full">
+                                <PostCard {...post} />
+                            </div>
+                        ))}
+                    </div>
+                )}
             </Container>
         </div>
-    );
+    )
 }
 
 export default Home;

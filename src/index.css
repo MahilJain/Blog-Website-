@@ -1,1 +1,78 @@
 @import "tailwindcss";
+
+:root {
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #e2e8f0;
+  background-color: #020617;
+  line-height: 1.5;
+  font-weight: 400;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top, rgba(37, 99, 235, 0.22), transparent 30%),
+    linear-gradient(180deg, #020617 0%, #0f172a 100%);
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+.browser-css h1,
+.browser-css h2,
+.browser-css h3,
+.browser-css h4,
+.browser-css h5,
+.browser-css h6 {
+  margin-top: 1.25rem;
+  margin-bottom: 0.75rem;
+  font-weight: 700;
+}
+
+.browser-css p,
+.browser-css ul,
+.browser-css ol {
+  margin-bottom: 1rem;
+}
+
+.browser-css img {
+  max-width: 100%;
+  border-radius: 0.75rem;
+}
+
+.browser-css a {
+  color: #60a5fa;
+  text-decoration: underline;
+}
+
+.browser-css blockquote {
+  border-left: 4px solid #3b82f6;
+  padding-left: 1rem;
+  color: #cbd5e1;
+}
+
+.browser-css pre {
+  overflow-x: auto;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  background: #111827;
+  color: #e5e7eb;
+}
