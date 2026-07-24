@@ -1,4 +1,4 @@
-# 12MegaBlog
+# Blog Website
 
 A React + Vite blog platform powered by Appwrite for authentication, content storage, and image upload.
 
