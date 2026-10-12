@@ -83,10 +83,11 @@ export class Service{
 
     async getPosts(queries = [Query.equal("status", "active")]){
         try {
+            const orderedQueries = [...queries, Query.orderDesc("$createdAt")];
             return await this.databases.listDocuments(
                 conf.appwriteDatabaseId,
                 conf.appwriteCollectionId,
-                queries,
+                orderedQueries,
                 
 
             )
