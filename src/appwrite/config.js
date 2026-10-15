@@ -1,5 +1,5 @@
 import conf from '../conf/conf.js';
-import { Client, ID, Databases, Storage, Query } from "appwrite";
+import { Client, ID, Databases, Storage, Query, Permission, Role } from "appwrite";
 
 export class Service{
     client = new Client();
@@ -14,8 +14,20 @@ export class Service{
         this.bucket = new Storage(this.client);
     }
 
+    getUserPermissions(userId) {
+        if (!userId) return [];
+
+        return [
+            Permission.read(Role.user(userId)),
+            Permission.write(Role.user(userId)),
+            Permission.update(Role.user(userId)),
+            Permission.delete(Role.user(userId)),
+        ];
+    }
+
     async createPost({title, content, featuredimage, status, userId}){
         try {
+            const permissions = this.getUserPermissions(userId);
             return await this.databases.createDocument(
                 conf.appwriteDatabaseId,
                 conf.appwriteCollectionId,
@@ -26,15 +38,17 @@ export class Service{
                     featuredimage,
                     status,
                     userId,
-                }
+                },
+                permissions
             )
         } catch (error) {
             console.log("Appwrite serive :: createPost :: error", error);
         }
     }
 
-    async updatePost(slug, {title, content, featuredimage, status}){
+    async updatePost(slug, {title, content, featuredimage, status, userId}){
         try {
+            const permissions = this.getUserPermissions(userId);
             return await this.databases.updateDocument(
                 conf.appwriteDatabaseId,
                 conf.appwriteCollectionId,
@@ -44,8 +58,9 @@ export class Service{
                     content,
                     featuredimage,
                     status,
-
-                }
+                    userId,
+                },
+                permissions
             )
         } catch (error) {
             console.log("Appwrite serive :: updatePost :: error", error);
@@ -99,12 +114,14 @@ export class Service{
 
     // file upload service
 
-    async uploadFile(file){
+    async uploadFile(file, userId){
         try {
+            const permissions = this.getUserPermissions(userId);
             return await this.bucket.createFile(
                 conf.appwriteBucketId,
                 ID.unique(),
-                file
+                file,
+                permissions
             )
         } catch (error) {
             console.log("Appwrite serive :: uploadFile :: error", error);

@@ -93,8 +93,10 @@ This app expects the following Appwrite resources:
 
 - Sign up or log in to access protected pages
 - Create a new post from `/add-post`
-- Upload a featured image when publishing a post
+- Enter a title and choose a featured image when publishing a post; the generated slug is shown automatically
+- Follow the inline upload and publish status, and correct any field or submission errors without losing the form
 - Edit existing posts from the post detail view if you are the author
+- Replace the featured image while editing, or keep the current image by leaving the image field empty
 - Delete a post from its detail view
 - Search posts by title or content on the home and all-posts pages
 
@@ -107,7 +109,8 @@ This app expects the following Appwrite resources:
 
 ## Notes
 
-- Post creation requires a featured image upload
+- New posts require a featured image; image replacement is optional when editing
+- The post form prevents duplicate submissions while uploading or saving and removes a newly uploaded image if saving the post fails
 - Authenticated routes are protected using `AuthLayout`
 - The app loads the current Appwrite session on initial mount and updates Redux auth state
 
